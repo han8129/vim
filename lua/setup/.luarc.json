@@ -1,0 +1,11 @@
+{
+    "diagnostics.globals": [
+        "SET",
+        "REMAP",
+        "AUTOCMD",
+        "vim",
+        "AUTOCMD_GROUP",
+        "LET",
+        "COLOR"
+    ]
+}
