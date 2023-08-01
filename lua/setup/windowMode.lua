@@ -1,24 +1,51 @@
+local options = { expr = true, noremap = true }
+
 -- Window mode
 --
 -- Switch focus, close, resize window with out prefix
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
+function WindowMode(super)
+    local obj = {_state = "off"}
+    obj.__index = obj
+    setmetatable(obj, super)
 
-local options = { expr = true, noremap = true }
+    function obj.new(...)
+        if obj._instance then
+            return obj._instance
+        end
 
-WindowMode = "disabled"
+        local instance = setmetatable({}, obj)
+        if instance.ctor then
+            instance:ctor(...)
+        end
 
-function WindowModeToggle()
-    if WindowMode == "active" then
-        WindowMode = "disabled"
-        print( " " )
-    else
-        WindowMode = "active"
-        print( "-- WINDOW --" )
+        obj._instance = instance
+        return obj._instance
     end
 
-    -- Change Status line color to magenta
-    SetStatusLine()
+    function obj.getState()
+        return obj._state
+    end
+
+    function obj.toggle()
+        if obj._state == "on" then
+            obj._state = "off"
+
+            print(" ")
+            return
+        end
+
+        obj._state = "on"
+
+        print("-- WINDOW --")
+        SetStatusLine()
+    end
+
+    return obj
 end
+
+local windowMode = WindowMode().new()
+
 
 AUTOCMD_GROUP( 'window_mode', { clear = true } );
 
@@ -27,8 +54,8 @@ AUTOCMD(
     'InsertEnter', {
     group = "window_mode",
     callback = function()
-        if WindowMode == "ative" then
-            WindowModeToggle()
+        if windowMode.getState() == "on" then
+            windowMode.toggle()
         end
     end
 })
@@ -37,7 +64,7 @@ AUTOCMD(
 AUTOCMD('WinEnter', {
     group = "window_mode"
     ,callback = function()
-        if WindowMode == "disabled" then
+        if windowMode.getState() == "off" then
             return
         end
 
@@ -47,7 +74,7 @@ AUTOCMD('WinEnter', {
 
         for _, filetype in ipairs(pattern) do
             if filetype == buffer then
-                WindowModeToggle()
+                windowMode.toggle()
                 return
             end
         end
@@ -66,27 +93,27 @@ AUTOCMD('WinEnter', {
 
 REMAP("n", "<C-w>"
 , function()
-    if (WindowMode == "active") then
+    if (windowMode.getState() == "on") then
         return "<C-w>"
     end
 
-    WindowModeToggle()
+    windowMode.toggle()
 end
 , options)
 
 REMAP("n", "<Esc>"
 , function()
-    if WindowMode == "disabled" then
+    if windowMode.getState() == "off" then
         return "<cmd>nohls<Enter>"
     end
 
-    WindowModeToggle()
+    windowMode.toggle()
 end
 , options)
 
 REMAP("n", "v"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>v"
     end
 
@@ -97,7 +124,7 @@ end
 
 REMAP("n", "J"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>J"
     end
 
@@ -107,7 +134,7 @@ end
 
 REMAP("n", "H"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<cmd>wincmd H<Enter>"
     end
 
@@ -117,7 +144,7 @@ end
 
 REMAP("n", "K"
 , function()
-    if (WindowMode == "active") then
+    if (windowMode.getState() == "on") then
         return "<cmd>wincmd K<Enter>"
     end
 
@@ -126,7 +153,7 @@ end
 , options)
 
 REMAP("n", "L", function()
-    if WindowMode == "active" then
+    if windowMode == "on" then
         return "<cmd>wincmd L<Enter>"
     end
 
@@ -136,7 +163,7 @@ end
 
 REMAP("n", "s"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<cmd>wincmd s<Enter>"
     end
 
@@ -146,7 +173,7 @@ end
 
 REMAP("n", "h"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<cmd>wincmd h<Enter>"
     end
 
@@ -156,7 +183,7 @@ end
 
 REMAP("n", "j"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<cmd>wincmd j<Enter>"
     end
 
@@ -166,7 +193,7 @@ end
 
 REMAP("n", "k"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<cmd>wincmd k<Enter>"
     end
 
@@ -176,7 +203,7 @@ end
 
 REMAP("n", "l"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>l"
     end
 
@@ -186,7 +213,7 @@ end
 
 REMAP("n", "x"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>c"
     end
 
@@ -196,8 +223,8 @@ end
 
 REMAP("n", "o"
 , function()
-    if WindowMode == "active" then
-        WindowModeToggle()
+    if windowMode.getState() == "on" then
+        windowMode.toggle()
 
         return "<C-w>o"
     end
@@ -208,7 +235,7 @@ end
 
 REMAP("n", "="
 , function()
-    if (WindowMode == "active") then
+    if (windowMode.getState() == "on") then
         return "<C-w>5+"
     end
 
@@ -218,7 +245,7 @@ end
 
 REMAP("n", "-"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>5-"
     end
 
@@ -228,7 +255,7 @@ end
 
 REMAP("n", "+"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>="
     end
 
@@ -238,7 +265,7 @@ end
 
 REMAP("n", "0"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>10>"
     end
 
@@ -248,7 +275,7 @@ end
 
 REMAP("n", "9"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>10<"
     end
 
@@ -258,7 +285,7 @@ end
 
 REMAP("n", "f"
 , function()
-    if WindowMode == "active" then
+    if windowMode.getState() == "on" then
         return "<C-w>_<C-w>|"
     end
 
