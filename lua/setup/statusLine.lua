@@ -1,6 +1,5 @@
-local gitHighlight = 'guifg=black guibg=orange'
 local font = "gui=none "
-
+local gitHighlight = 'guifg=black guibg=orange'
 local normal = font .. "guifg=black guibg=" .. COLOR["blue"]
 local insert = font .. "guifg=black guibg=yellow"
 local select = font .. "guifg=white guibg=" .. COLOR["red1"]
@@ -11,7 +10,7 @@ function GitCurrentBranch()
     return vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 end
 
-local function SetGitBranch()
+function SetGitBranch()
     vim.cmd('highlight Gitbranch ' .. gitHighlight)
 
     local currentBranch = GitCurrentBranch()
@@ -24,41 +23,22 @@ local function SetGitBranch()
     end
 end
 
-function SetStatusLine()
-    if WindowMode == "active" then
-        vim.cmd( "highlight StatusLine " .. window )
-
-        return
-    end
-
-    local mode = vim.fn.mode()
-
-    if mode == "i" then
+function SetStatusLine( mode )
+    if mode == "" then
+        return false
+    elseif mode == "i" then
         vim.cmd( "highlight Statusline " .. insert )
-
+        return true
     elseif mode == "n" then
         vim.cmd( "highlight Statusline " .. normal )
-
+        return true
+    elseif mode == "w" then
+        vim.cmd( "highlight StatusLine " .. window )
+        return true
     elseif mode == "c" then
         vim.cmd( "highlight StatusLine " .. command )
-
+        return true
     else
         vim.cmd( "highlight Statusline " .. select )
     end
 end
-
-AUTOCMD_GROUP( 'StatusLine', { clear = true, });
-
-AUTOCMD( "BufEnter", {
-    group = "StatusLine"
-    ,callback = function()
-        SetGitBranch()
-    end
-})
-
-AUTOCMD('ModeChanged', {
-    group = "StatusLine"
-    ,command = 'lua SetStatusLine()'
-})
-
-SetStatusLine()
