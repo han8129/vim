@@ -6,74 +6,47 @@
 function IBusManager()
     local obj = {}
 
+    obj.__index = obj
+    obj._EN = 'BambooUs'
+    obj._VI = 'Bamboo'
+    obj._needSwitch = false
+
     function obj.new()
         if obj._instance then
             return obj._instance
         end
 
-        obj.__index = obj
-        obj._EN = 'BambooUs'
-        obj._VI = 'Bamboo'
-        obj._previousState = 'BambooUs'
         obj._instance = setmetatable({}, obj)
-
         return obj._instance
     end
 
-    vim.fn.system('iBus engine BambooUs')
-
-    local function on()
-        vim.fn.system('iBus engine ' .. obj._VI)
+    local function setLanguage( language )
+        vim.fn.system('ibus engine ' .. language)
     end
 
-    local function off()
-        vim.fn.system('iBus engine ' .. obj._EN)
-    end
-
-    local function getCurrentState()
-        return vim.fn.system('iBus engine')
+    local function getCurrentLanguage()
+        local currentLanguage = vim.fn.system('ibus engine')
+        -- the return value contain newline character
+        return string.sub(currentLanguage, 1, -2)
     end
 
     function obj.on()
-        if obj._previousState == obj._VI then
-            on()
+        if obj._needSwitch then
+            setLanguage( obj._VI )
         end
+
     end
 
     function obj.off()
-        local state = getCurrentState()
-
-        if state == obj._EN then
-            return false
+        if obj._EN == getCurrentLanguage() then
+            obj._needSwitch = false
+            return
         end
 
-        off()
-
-        obj._previousState = state
+        setLanguage( obj._EN )
+        obj._needSwitch = true
     end
 
+    setLanguage( obj._EN )
     return obj
 end
-
-iBus = IBusManager().new()
-
-vim.cmd([[
-
-augroup IBusHandler
-autocmd!
-" Khôi phục iBus engine khi tìm kiếm
-autocmd CmdLineEnter [/?] silent lua iBus.on()
-autocmd CmdLineLeave [/?] silent lua iBus.off()
-autocmd CmdLineEnter \? silent lua iBus.on()
-autocmd CmdLineLeave \? silent lua iBus.off()
-" Khôi phục iBus engine khi vào insert mode
-autocmd InsertEnter * silent lua iBus.on()
-" Tắt iBus engine khi vào normal mode
-autocmd InsertLeave * silent lua iBus.off()
-
-autocmd VimEnter * silent lua iBus.off()
-
-autocmd FocusGained * silent lua iBus.off()
-
-augroup END
-]])
