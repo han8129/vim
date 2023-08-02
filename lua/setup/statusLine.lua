@@ -16,29 +16,31 @@ function SetGitBranch()
     local currentBranch = GitCurrentBranch()
 
     if (currentBranch == '') then
-        vim.opt.statusline = "%#FileStatus#%h%m%r%#StatusLine# #%n %-.79(%<%f%) %P %#Nontext#"
+        vim.opt.statusline = "%#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     else
         vim.opt.statusline = "%#Gitbranch# שׂ " ..
-            currentBranch .. " %#FileStatus#%h%m%r%#StatusLine# #%n %-.79(%<%f%) %P %#Nontext#"
+            currentBranch .. " %#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     end
 end
 
 function SetStatusLine( mode )
-    if mode == "" then
-        return false
-    elseif mode == "i" then
+    mode = mode or vim.fn.mode()
+
+    if mode == "i" then
         vim.cmd( "highlight Statusline " .. insert )
-        return true
+
     elseif mode == "n" then
         vim.cmd( "highlight Statusline " .. normal )
-        return true
+
     elseif mode == "w" then
         vim.cmd( "highlight StatusLine " .. window )
-        return true
+
     elseif mode == "c" then
         vim.cmd( "highlight StatusLine " .. command )
-        return true
+
     else
         vim.cmd( "highlight Statusline " .. select )
     end
 end
+
+SetStatusLine()
