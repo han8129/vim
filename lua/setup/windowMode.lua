@@ -1,25 +1,19 @@
-local options = { expr = true, noremap = true }
-
 -- Window mode
 --
 -- Switch focus, close, resize window with out prefix
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
-function WindowMode(super)
-    local obj = {_state = "off"}
-    obj.__index = obj
-    setmetatable(obj, super)
+function WindowMode()
+    local obj = {}
 
-    function obj.new(...)
+    function obj.new()
         if obj._instance then
             return obj._instance
         end
 
-        local instance = setmetatable({}, obj)
-        if instance.ctor then
-            instance:ctor(...)
-        end
+        obj._state = "off"
+        obj.__index = obj
+        obj._instance = setmetatable({}, obj)
 
-        obj._instance = instance
         return obj._instance
     end
 
@@ -31,10 +25,12 @@ function WindowMode(super)
         if obj._state == "on" then
             obj._state = "off"
 
+            print( " " )
             return
         end
 
         obj._state = "on"
+        print( "-- WINDOW --")
     end
 
     return obj
