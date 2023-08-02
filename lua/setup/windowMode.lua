@@ -4,14 +4,14 @@
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
 function WindowMode()
     local obj = {}
+    obj.__index = obj
+    obj._state = "off"
 
     function obj.new()
         if obj._instance then
             return obj._instance
         end
 
-        obj._state = "off"
-        obj.__index = obj
         obj._instance = setmetatable({}, obj)
 
         return obj._instance
