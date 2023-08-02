@@ -1,5 +1,6 @@
 vim.cmd([[
     let terminal_green = "#4AF626"
+
     highlight Normal guifg=green
 
     highlight String guifg=green
@@ -26,6 +27,8 @@ vim.cmd([[
 
     highlight DiagnosticHint guifg=yellow
     highlight FileStatus guibg=red guifg=white
+
+    highlight FormatWarning guibg=yellow guifg=black
 
     call matchadd('FormatWarning', '\%79v', 100)
     " match FormatWarning /\%79c/

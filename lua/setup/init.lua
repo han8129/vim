@@ -17,6 +17,8 @@ local expr = { expr = true, noremap = true }
 
 local windowMode = WindowMode().new()
 
+local iBus = IBusManager().new()
+
 function R(name)
     require("plenary.reload").reload_module(name)
 end
@@ -43,12 +45,9 @@ AUTOCMD_GROUP( 'StatusLine', { clear = true, });
 AUTOCMD('ModeChanged', {
     group = "StatusLine"
     ,callback = function ()
-        if windowMode.getState() == "on" then
-            SetStatusLine("w")
-            return
+        if windowMode.getState() == "off" then
+            SetStatusLine( vim.fn.mode() )
         end
-
-        SetStatusLine( vim.fn.mode() )
     end
 })
 
@@ -68,6 +67,7 @@ AUTOCMD(
     callback = function()
         if windowMode.getState() == "on" then
             windowMode.toggle()
+            SetStatusLine()
         end
     end
 })
@@ -87,6 +87,7 @@ AUTOCMD('WinEnter', {
         for _, filetype in ipairs(pattern) do
             if filetype == buffer then
                 windowMode.toggle()
+                SetStatusLine()
                 return
             end
         end
@@ -105,11 +106,12 @@ AUTOCMD('WinEnter', {
 
 REMAP("n", "<C-w>"
 , function()
-    if (windowMode.getState() == "on") then
+    if windowMode.getState() == "on" then
         return "<C-w>"
     end
 
     windowMode.toggle()
+    SetStatusLine("w")
 end
 , expr)
 
@@ -120,6 +122,7 @@ REMAP("n", "<Esc>"
     end
 
     windowMode.toggle()
+    SetStatusLine()
 end
 , expr)
 
@@ -237,7 +240,7 @@ REMAP("n", "o"
 , function()
     if windowMode.getState() == "on" then
         windowMode.toggle()
-
+        SetStatusLine()
         return "<C-w>o"
     end
 
@@ -304,3 +307,33 @@ REMAP("n", "f"
     return "<Plug>(leap-forward-to)"
 end
 , expr)
+
+AUTOCMD_GROUP( 'IBus', { clear = true } );
+
+AUTOCMD( "CmdLineEnter", {
+    group = "IBus"
+    ,callback = function()
+        iBus.on()
+    end
+})
+
+AUTOCMD( "InsertEnter", {
+    group = "IBus"
+    ,callback = function()
+        iBus.on()
+    end
+})
+
+AUTOCMD( "CmdLineLeave", {
+    group = "IBus"
+    ,callback = function()
+        iBus.off()
+    end
+})
+
+AUTOCMD( "InsertLeave", {
+    group = "IBus"
+    ,callback = function()
+        iBus.off()
+    end
+})
