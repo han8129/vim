@@ -12,9 +12,10 @@ leap.opts.special_keys = {
 }
 
 -- (leap-forward-to) @see winmode.lua
-vim.keymap.set( 'n', 'F', '<Plug>(leap-backward-to)' )
-vim.keymap.set( 'n', 't', '<Plug>(leap-forward-till)' )
-vim.keymap.set( 'n', 'T', '<Plug>(leap-backward-till)' )
+REMAP( "n", "f", "<Plug>(leap-forward-to)")
+REMAP( 'n', 'F', '<Plug>(leap-backward-to)' )
+REMAP( 'n', 't', '<Plug>(leap-forward-till)' )
+REMAP( 'n', 'T', '<Plug>(leap-backward-till)' )
 
 vim.cmd([[
 

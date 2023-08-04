@@ -1,3 +1,5 @@
+local expr = { expr = true, noremap = true }
+
 require("setup.packer")
 require("setup.set")
 require("setup.remap")
@@ -6,18 +8,22 @@ require("setup.autoswap")
 require("setup.statusLine")
 require("setup.windowMode")
 require("setup.ibus")
+require("setup.ibusManager")
 require("setup.highlight")
 -- require("setup.indentation")
+
+-- turn off Ibus when entering vim
+local ibus = IBus()
+local eng = ibus.getDefault().EN
+ibus.setLanguage( eng )
 
 local ThePrimeagenGroup = AUTOCMD_GROUP('ThePrimeagen', {})
 
 local yank_group = AUTOCMD_GROUP('HighlightYank', {})
 
-local expr = { expr = true, noremap = true }
+local windowMode = WindowMode().getInstance()
 
-local windowMode = WindowMode().new()
-
-local iBus = IBusManager().new()
+local ibusController = IBusController().getInstance()
 
 function R(name)
     require("plenary.reload").reload_module(name)
@@ -46,7 +52,7 @@ AUTOCMD('ModeChanged', {
     group = "StatusLine"
     ,callback = function ()
         if windowMode.getState() == "off" then
-            SetStatusLine( vim.fn.mode() )
+            SetStatusLine()
         end
     end
 })
@@ -55,6 +61,36 @@ AUTOCMD( "BufEnter", {
     group = "StatusLine"
     ,callback = function()
         SetGitBranch()
+    end
+})
+
+AUTOCMD_GROUP( 'IBus', { clear = true } );
+
+AUTOCMD( "CmdLineEnter", {
+    group = "IBus"
+    ,callback = function()
+        ibusController.on()
+    end
+})
+
+AUTOCMD( "InsertEnter", {
+    group = "IBus"
+    ,callback = function()
+        ibusController.on()
+    end
+})
+
+AUTOCMD( "CmdLineLeave", {
+    group = "IBus"
+    ,callback = function()
+        ibusController.off()
+    end
+})
+
+AUTOCMD( "InsertLeave", {
+    group = "IBus"
+    ,callback = function()
+        ibusController.off()
     end
 })
 
@@ -67,7 +103,6 @@ AUTOCMD(
     callback = function()
         if windowMode.getState() == "on" then
             windowMode.toggle()
-            SetStatusLine()
         end
     end
 })
@@ -87,7 +122,6 @@ AUTOCMD('WinEnter', {
         for _, filetype in ipairs(pattern) do
             if filetype == buffer then
                 windowMode.toggle()
-                SetStatusLine()
                 return
             end
         end
@@ -111,10 +145,10 @@ REMAP("n", "<C-w>"
     end
 
     windowMode.toggle()
-    SetStatusLine("w")
 end
 , expr)
 
+-- Window mode remap
 REMAP("n", "<Esc>"
 , function()
     if windowMode.getState() == "off" then
@@ -122,7 +156,6 @@ REMAP("n", "<Esc>"
     end
 
     windowMode.toggle()
-    SetStatusLine()
 end
 , expr)
 
@@ -147,16 +180,6 @@ REMAP("n", "J"
 end
 , expr)
 
-REMAP("n", "H"
-, function()
-    if windowMode.getState() == "on" then
-        return "<cmd>wincmd H<Enter>"
-    end
-
-    return "H"
-end
-, expr)
-
 REMAP("n", "K"
 , function()
     if (windowMode.getState() == "on") then
@@ -167,80 +190,11 @@ REMAP("n", "K"
 end
 , expr)
 
-REMAP("n", "L", function()
-    if windowMode == "on" then
-        return "<cmd>wincmd L<Enter>"
-    end
-
-    return "L"
-end
-, expr)
-
-REMAP("n", "s"
-, function()
-    if windowMode.getState() == "on" then
-        return "<cmd>wincmd s<Enter>"
-    end
-
-    return "s"
-end
-, expr)
-
-REMAP("n", "h"
-, function()
-    if windowMode.getState() == "on" then
-        return "<cmd>wincmd h<Enter>"
-    end
-
-    return "h"
-end
-, expr)
-
-REMAP("n", "j"
-, function()
-    if windowMode.getState() == "on" then
-        return "<cmd>wincmd j<Enter>"
-    end
-
-    return "j"
-end
-, expr)
-
-REMAP("n", "k"
-, function()
-    if windowMode.getState() == "on" then
-        return "<cmd>wincmd k<Enter>"
-    end
-
-    return "k"
-end
-, expr)
-
-REMAP("n", "l"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>l"
-    end
-
-    return "l"
-end
-, expr)
-
-REMAP("n", "x"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>c"
-    end
-
-    return "x"
-end
-, expr)
-
 REMAP("n", "o"
 , function()
     if windowMode.getState() == "on" then
         windowMode.toggle()
-        SetStatusLine()
+
         return "<C-w>o"
     end
 
@@ -248,92 +202,28 @@ REMAP("n", "o"
 end
 , expr)
 
-REMAP("n", "="
-, function()
-    if (windowMode.getState() == "on") then
-        return "<C-w>5+"
-    end
+windowMode.remap("H")
 
-    return "="
-end
-, expr)
+windowMode.remap("L")
 
-REMAP("n", "-"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>5-"
-    end
+windowMode.remap("s")
 
-    return "-"
-end
-, expr)
+windowMode.remap("h")
 
-REMAP("n", "+"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>="
-    end
+windowMode.remap("j")
 
-    return "+"
-end
-, expr)
+windowMode.remap("k")
 
-REMAP("n", "0"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>10>"
-    end
+windowMode.remap("l")
 
-    return "0"
-end
-, expr)
+windowMode.remap("x", "c")
 
-REMAP("n", "9"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>10<"
-    end
+windowMode.remap( "=", "5+" )
 
-    return "9"
-end
-, expr)
+windowMode.remap( '-', '5-')
 
-REMAP("n", "f"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>_<C-w>|"
-    end
+windowMode.remap( "+", "=" )
 
-    return "<Plug>(leap-forward-to)"
-end
-, expr)
+windowMode.remap( "0", "10>")
 
-AUTOCMD_GROUP( 'IBus', { clear = true } );
-
-AUTOCMD( "CmdLineEnter", {
-    group = "IBus"
-    ,callback = function()
-        iBus.on()
-    end
-})
-
-AUTOCMD( "InsertEnter", {
-    group = "IBus"
-    ,callback = function()
-        iBus.on()
-    end
-})
-
-AUTOCMD( "CmdLineLeave", {
-    group = "IBus"
-    ,callback = function()
-        iBus.off()
-    end
-})
-
-AUTOCMD( "InsertLeave", {
-    group = "IBus"
-    ,callback = function()
-        iBus.off()
-    end
-})
+windowMode.remap( "9", "10<")

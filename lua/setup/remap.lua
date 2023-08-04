@@ -2,8 +2,8 @@ vim.g.mapleader = " "
 
 REMAP("n", "U", "<C-r>")
 
-REMAP('n', ':', ';')
-REMAP('n', ';', ':')
+REMAP( {'n', 'v'}, ':', ';')
+REMAP( {'n', 'v'}, ';', ':')
 
 REMAP(
     { "n", "v" }
