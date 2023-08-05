@@ -8,7 +8,7 @@ require("setup.autoswap")
 require("setup.statusLine")
 require("setup.windowMode")
 require("setup.ibus")
-require("setup.ibusManager")
+require("setup.ibusController")
 require("setup.highlight")
 -- require("setup.indentation")
 
