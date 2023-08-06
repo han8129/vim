@@ -31,7 +31,6 @@ vim.cmd([[
     highlight FormatWarning guibg=yellow guifg=black
 
     call matchadd('FormatWarning', '\%79v', 100)
-    " match FormatWarning /\%79c/
 
     match FormatWarning /\s$/
 

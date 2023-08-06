@@ -1,33 +1,28 @@
-local expr = { expr = true, noremap = true }
-
-require("setup.packer")
-require("setup.set")
-require("setup.remap")
-require("setup.netrw")
-require("setup.autoswap")
+require( "setup.packer" )
+require( "setup.set" )
+require( "setup.remap" )
+require( "setup.netrw" )
+require( "setup.EventManager" )
+require( "setup.highlight" )
 require("setup.statusLine")
-require("setup.windowMode")
-require("setup.ibus")
-require("setup.ibusController")
-require("setup.highlight")
--- require("setup.indentation")
+require("setup.Models.IBus")
+require("setup.Controllers.IBusController")
+require( "setup.Controllers.WindowModeController" )
+require( "setup.EventManager" )
 
--- turn off Ibus when entering vim
+local eventManager = EventManager().new()
 local ibus = IBus()
-local eng = ibus.getDefault().EN
-ibus.setLanguage( eng )
-
-local ThePrimeagenGroup = AUTOCMD_GROUP('ThePrimeagen', {})
-
-local yank_group = AUTOCMD_GROUP('HighlightYank', {})
-
+local ibusController = IBusController().new()
 local windowMode = WindowMode().getInstance()
-
-local ibusController = IBusController().getInstance()
+local windowModeController = WindowModeController().new()
 
 function R(name)
     require("plenary.reload").reload_module(name)
 end
+
+local ThePrimeagenGroup = AUTOCMD_GROUP('ThePrimeagen', {})
+
+local yank_group = AUTOCMD_GROUP('HighlightYank', {})
 
 AUTOCMD('TextYankPost', {
     group = yank_group,
@@ -46,184 +41,53 @@ AUTOCMD({"BufWritePre"}, {
     command = [[%s/\s\+$//e]],
 })
 
-AUTOCMD_GROUP( 'StatusLine', { clear = true, });
+-- turn off Ibus when entering vim
+ibus.setLanguage( ibus.getDefault().EN )
 
-AUTOCMD('ModeChanged', {
-    group = "StatusLine"
-    ,callback = function ()
+eventManager.subscribe( "ModeChanged",
+    function()
         if windowMode.getState() == "off" then
             SetStatusLine()
         end
     end
-})
+)
 
-AUTOCMD( "BufEnter", {
-    group = "StatusLine"
-    ,callback = function()
-        SetGitBranch()
-    end
-})
+eventManager.subscribe( "BufEnter", SetGitBranch() )
 
-AUTOCMD_GROUP( 'IBus', { clear = true } );
+eventManager.subscribe( "CmdLineEnter", function() ibusController.on() end )
 
-AUTOCMD( "CmdLineEnter", {
-    group = "IBus"
-    ,callback = function()
-        ibusController.on()
-    end
-})
+eventManager.subscribe( "InsertEnter", function() ibusController.on() end )
 
-AUTOCMD( "InsertEnter", {
-    group = "IBus"
-    ,callback = function()
-        ibusController.on()
-    end
-})
+eventManager.subscribe( "CmdLineLeave", function() ibusController.off() end )
 
-AUTOCMD( "CmdLineLeave", {
-    group = "IBus"
-    ,callback = function()
-        ibusController.off()
-    end
-})
+eventManager.subscribe( "InsertLeave", function() ibusController.off() end )
 
-AUTOCMD( "InsertLeave", {
-    group = "IBus"
-    ,callback = function()
-        ibusController.off()
-    end
-})
 
-AUTOCMD_GROUP( 'window_mode', { clear = true } );
+eventManager.subscribe( "WinEnter"
+    ,function() vim.cmd( "setlocal cursorline" ) end
+)
 
--- Disable Window Mode in Insert Mode
-AUTOCMD(
-    'InsertEnter', {
-    group = "window_mode",
-    callback = function()
-        if windowMode.getState() == "on" then
-            windowMode.toggle()
+eventManager.subscribe( "WinLeave"
+    ,function() vim.cmd( "setlocal nocursorline" ) end
+)
+
+eventManager.subscribe( "InsertEnter"
+    ,function()
+        if windowMode.getState() == windowMode.getDefault().on then
+            windowModeController.toggle()
         end
     end
-})
+)
 
--- Disable Window Mode in certain filetype
-AUTOCMD('WinEnter', {
-    group = "window_mode"
-    ,callback = function()
-        if windowMode.getState() == "off" then
-            return
-        end
+eventManager.subscribe( "WinEnter"
+    ,function () windowModeController.specificFiles() end
+)
 
-        local pattern = { 'netrw', 'fugitive', 'help' }
-
-        local buffer = vim.bo.ft
-
-        for _, filetype in ipairs(pattern) do
-            if filetype == buffer then
-                windowMode.toggle()
-                return
-            end
-        end
-    end,
-})
-
-AUTOCMD('WinLeave', {
-    group = "window_mode"
-    ,command = 'setlocal nocursorline'
-})
-
-AUTOCMD('WinEnter', {
-    group = "window_mode"
-    ,command = 'setlocal cursorline'
-})
-
-REMAP("n", "<C-w>"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>"
-    end
-
-    windowMode.toggle()
-end
-, expr)
-
--- Window mode remap
-REMAP("n", "<Esc>"
-, function()
-    if windowMode.getState() == "off" then
-        return "<cmd>nohls<Enter>"
-    end
-
-    windowMode.toggle()
-end
-, expr)
-
-REMAP("n", "v"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>v"
-    end
-
-    return "<C-q>"
-end
-, expr)
-
-
-REMAP("n", "J"
-, function()
-    if windowMode.getState() == "on" then
-        return "<C-w>J"
-    end
-
-    return "mzJ`z"
-end
-, expr)
-
-REMAP("n", "K"
-, function()
-    if (windowMode.getState() == "on") then
-        return "<cmd>wincmd K<Enter>"
-    end
-
-    return '<CMD>lua _G.show_docs()<CR>'
-end
-, expr)
-
-REMAP("n", "o"
-, function()
-    if windowMode.getState() == "on" then
-        windowMode.toggle()
-
-        return "<C-w>o"
-    end
-
-    return "o"
-end
-, expr)
-
-windowMode.remap("H")
-
-windowMode.remap("L")
-
-windowMode.remap("s")
-
-windowMode.remap("h")
-
-windowMode.remap("j")
-
-windowMode.remap("k")
-
-windowMode.remap("l")
-
-windowMode.remap("x", "c")
-
-windowMode.remap( "=", "5+" )
-
-windowMode.remap( '-', '5-')
-
-windowMode.remap( "+", "=" )
-
-windowMode.remap( "0", "10>")
-
-windowMode.remap( "9", "10<")
+eventManager.notify( "ModeChanged" )
+eventManager.notify( "InsertEnter" )
+eventManager.notify( "InsertLeave" )
+eventManager.notify( "CmdLineEnter" )
+eventManager.notify( "CmdLineLeave" )
+eventManager.notify( "BufEnter" )
+eventManager.notify( "WinEnter" )
+eventManager.notify( "WinLeave" )

@@ -12,7 +12,6 @@ function NetrwMapping()
     nmap <buffer> p <nop>
     nmap <buffer> o <nop>
     nmap <buffer> <C-w> <C-w>
-    nmap <buffer> <C-w> <C-w>
 
     ]])
 end

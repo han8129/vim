@@ -1,9 +1,9 @@
 local font = "gui=none "
-local gitHighlight = 'guifg=black guibg=orange'
-local normal = font .. "guifg=black guibg=" .. COLOR["blue"]
+local gitHighlight = 'guifg=black guibg=' .. COLOR.orange
+local normal = font .. "guifg=black guibg=" .. COLOR.blue
 local insert = font .. "guifg=black guibg=yellow"
-local select = font .. "guifg=white guibg=" .. COLOR["red1"]
-local command = font .. "guifg=black guibg=#4AF626"
+local select = font .. "guifg=white guibg=" .. COLOR.red1
+local command = font .. "guifg=black guibg=" .. COLOR.green
 local window = font .. "guifg=black guibg=magenta"
 
 function GitCurrentBranch()

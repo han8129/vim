@@ -1,3 +1,10 @@
+require( "setup.Models.WindowMode" )
+require( "setup.Controllers.WindowModeController" )
+
+local expr = { expr = true, noremap = true }
+local windowMode = WindowMode().getInstance()
+local windowModeController = WindowModeController().new()
+
 vim.g.mapleader = " "
 
 REMAP("n", "U", "<C-r>")
@@ -6,7 +13,7 @@ REMAP( {'n', 'v'}, ':', ';')
 REMAP( {'n', 'v'}, ';', ':')
 
 REMAP(
-    { "n", "v" }
+    { "v", "o" }
     , "-", "^"
 )
 
@@ -58,3 +65,101 @@ REMAP("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>")
 REMAP("n", "<leader><leader>", function()
     vim.cmd("so %")
 end)
+
+REMAP("n", "<C-w>"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        return "<C-w>"
+    end
+
+    windowModeController.toggle()
+end
+, expr)
+
+-- Window mode remap
+REMAP("n", "<Esc>"
+, function()
+    if windowMode.getState() == windowMode.getDefault().off then
+        return "<cmd>nohls<Enter>"
+    end
+
+    windowModeController.toggle()
+end
+, expr)
+
+REMAP("n", "v"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        return "<C-w>v"
+    end
+
+    return "<C-q>"
+end
+, expr)
+
+
+REMAP("n", "J"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        return "<C-w>J"
+    end
+
+    return "mzJ`z"
+end
+, expr)
+
+REMAP("n", "K"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        return "<cmd>wincmd K<Enter>"
+    end
+
+    return '<CMD>lua _G.show_docs()<CR>'
+end
+, expr)
+
+REMAP("n", "o"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        windowModeController.toggle()
+
+        return "<C-w>o"
+    end
+
+    return "o"
+end
+, expr)
+
+REMAP("n", "-"
+, function()
+    if windowMode.getState() == windowMode.getDefault().on then
+        return "<C-w>5-"
+    end
+
+    return "^"
+end
+, expr)
+
+windowMode.remap("H")
+
+windowMode.remap("L")
+
+windowMode.remap("s")
+
+windowMode.remap("h")
+
+windowMode.remap("j")
+
+windowMode.remap("k")
+
+windowMode.remap("l")
+
+windowMode.remap("x", "c")
+
+windowMode.remap( "=", "5+" )
+
+windowMode.remap( "+", "=" )
+
+windowMode.remap( "0", "10>")
+
+windowMode.remap( "9", "10<")

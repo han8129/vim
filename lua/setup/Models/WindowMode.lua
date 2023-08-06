@@ -6,41 +6,49 @@ local expr = { expr = true, noremap = true }
 -- Switch focus, close, resize window with out prefix
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
 local this = {}
+this.__index = this
 this._instance = nil
+this.default = { on = true, off = false }
 
 function WindowMode()
     this.getInstance = function()
         if this._instance == nil then
-            this.__index = this
-            this.state = "off"
+            this.state = this.default.off
             this._instance = setmetatable( {}, this )
         end
 
         return this._instance
     end
 
-    this.toggle = function()
-        if this.state == "on" then
-            this.state = "off"
-
-            SetStatusLine()
-            print( " " )
-            return
-        end
-
-        this.state = "on"
-        SetStatusLine( "w" )
-        print( "-- WINDOW --" )
-    end
-
     this.getState = function()
         return this.state
     end
 
-    this.remap = function(key, customKey )
+    this.getDefault = function()
+        local clone = {}
+
+        for key, value in pairs( this.default ) do
+            clone[key] = value
+        end
+
+        return clone
+    end
+
+    this.setState = function( state )
+        for _, value in pairs( this.default ) do
+            if state == value then
+                this.state = value
+                return true
+            end
+        end
+
+        return false
+    end
+
+    this.remap = function( key, customKey )
         REMAP("n", key
             , function()
-                if this.state == "off" then
+                if this.state == this.default.off then
                     return key
                 end
 
@@ -55,8 +63,9 @@ function WindowMode()
 
     return {
         getInstance = this.getInstance
+        ,getDefault = this.getDefault
         ,getState = this.getState
-        ,toggle = this.toggle
+        ,setState = this.setState
         ,remap = this.remap
     }
 end
