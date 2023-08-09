@@ -56,16 +56,10 @@ eventManager.subscribe( "BufEnter", SetGitBranch() )
 
 eventManager.subscribe( "CmdLineEnter", function() ibusController.on() end )
 
-eventManager.subscribe( "InsertEnter", function() ibusController.on() end )
 
 eventManager.subscribe( "CmdLineLeave", function() ibusController.off() end )
 
 eventManager.subscribe( "InsertLeave", function() ibusController.off() end )
-
-
-eventManager.subscribe( "WinEnter"
-    ,function() vim.cmd( "setlocal cursorline" ) end
-)
 
 eventManager.subscribe( "WinLeave"
     ,function() vim.cmd( "setlocal nocursorline" ) end
@@ -76,18 +70,14 @@ eventManager.subscribe( "InsertEnter"
         if windowMode.getState() == windowMode.getDefault().on then
             windowModeController.toggle()
         end
+
+        ibusController.on()
     end
 )
 
 eventManager.subscribe( "WinEnter"
-    ,function () windowModeController.specificFiles() end
+    ,function ()
+        windowModeController.specificFiles()
+        ;vim.cmd( "setlocal cursorline" )
+    end
 )
-
-eventManager.notify( "ModeChanged" )
-eventManager.notify( "InsertEnter" )
-eventManager.notify( "InsertLeave" )
-eventManager.notify( "CmdLineEnter" )
-eventManager.notify( "CmdLineLeave" )
-eventManager.notify( "BufEnter" )
-eventManager.notify( "WinEnter" )
-eventManager.notify( "WinLeave" )

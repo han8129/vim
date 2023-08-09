@@ -59,5 +59,7 @@ return packer.startup(function(use)
     use("eandrju/cellular-automaton.nvim")
     use("laytan/cloak.nvim")
 
-    use("ggandor/leap.nvim")
+    use( "ggandor/leap.nvim" )
+
+    use( "tpope/vim-surround" )
 end)
