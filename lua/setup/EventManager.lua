@@ -10,16 +10,13 @@ function EventManager()
         return setmetatable( {}, this )
     end
 
-    this.subscribe = function( eventType, ... )
+    this.subscribe = function( eventType, listener )
         if this.listeners[ eventType ] == nil then
             this.listeners[ eventType ] = {}
             this.notify( eventType )
         end
 
-        for _, listener in pairs{ ... } do
-            table.insert( this.listeners[ eventType ], listener )
-        end
-
+        table.insert( this.listeners[ eventType ], listener )
         return true
     end
 

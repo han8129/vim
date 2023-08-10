@@ -1,27 +1,34 @@
-require( "setup.statusLine" )
-local expr = { expr = true, noremap = true }
+local options = {
+    netrw_banner = 0,
+    netrw_browse_split = 4,
+    netrw_liststyle = 0,
+    netrw_preview = 1,
+    netrw_altv = 1,
+    netrw_localcopydircmd = 'cp -r',
+}
 
--- Window mode
---
--- Switch focus, close, resize window with out prefix
--- Toggle by <C-w>, Go back to normal mode with <Esc>
 local this = {}
 this.__index = this
 this._instance = nil
-this.default = { on = true, off = false }
 
-function WindowMode()
+function Netrw()
     this.getInstance = function()
         if this._instance == nil then
+            -- setup netrw configurations
+            for key, value in pairs( options ) do
+                LET[key] = value
+            end
+
+            this.default = { on = true, off = false }
             this.state = this.default.off
             this._instance = true
         end
 
         return {
-            getState = this.getState
+            getDefault = this.getDefault
+            ,getState = this.getState
             ,setState = this.setState
-            ,getDefault = this.getDefault
-            ,remap = this.remap
+            ,map = this.map
         }
     end
 
@@ -50,20 +57,18 @@ function WindowMode()
         return false
     end
 
-    this.remap = function( key, customKey )
-        REMAP("n", key
-            , function()
-                if this.state == this.default.off then
-                    return key
-                end
+    this.map = function()
+        vim.cmd([[
 
-                if customKey then
-                    return "<C-w>" .. customKey
-                end
+        nmap <buffer> h -^
+        nmap <buffer> l <Enter>
+        nmap <buffer> . gh
+        nmap <buffer> v <nop>
+        nmap <buffer> p <nop>
+        nmap <buffer> o <nop>
+        nmap <buffer> <C-w> <C-w>
 
-                return "<C-w>" .. key
-            end
-        ,expr)
+        ]])
     end
 
     return {

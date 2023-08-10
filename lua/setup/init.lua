@@ -1,20 +1,26 @@
 require( "setup.packer" )
 require( "setup.set" )
 require( "setup.remap" )
-require( "setup.netrw" )
+require( "setup.Models.Netrw" )
 require( "setup.EventManager" )
 require( "setup.highlight" )
 require("setup.statusLine")
 require("setup.Models.IBus")
 require("setup.Controllers.IBusController")
 require( "setup.Controllers.WindowModeController" )
+require( "setup.Controllers.NetrwController" )
 require( "setup.EventManager" )
 
 local eventManager = EventManager().new()
+
 local ibus = IBus()
 local ibusController = IBusController().new()
+
 local windowMode = WindowMode().getInstance()
 local windowModeController = WindowModeController().new()
+
+local netrw = Netrw().getInstance()
+local netrwController = NetrwController().new()
 
 function R(name)
     require("plenary.reload").reload_module(name)
@@ -52,7 +58,16 @@ eventManager.subscribe( "ModeChanged",
     end
 )
 
-eventManager.subscribe( "BufEnter", SetGitBranch() )
+eventManager.subscribe( "BufEnter" , function()
+    SetGitBranch()
+end)
+
+eventManager.subscribe( "FileType" , function()
+    if "netrw" == vim.bo.ft then
+        netrw.map()
+        netrw.setState( netrw.getDefault().on )
+    end
+end)
 
 eventManager.subscribe( "CmdLineEnter", function() ibusController.on() end )
 
@@ -67,10 +82,7 @@ eventManager.subscribe( "WinLeave"
 
 eventManager.subscribe( "InsertEnter"
     ,function()
-        if windowMode.getState() == windowMode.getDefault().on then
-            windowModeController.toggle()
-        end
-
+        windowModeController.off()
         ibusController.on()
     end
 )
@@ -78,6 +90,6 @@ eventManager.subscribe( "InsertEnter"
 eventManager.subscribe( "WinEnter"
     ,function ()
         windowModeController.specificFiles()
-        ;vim.cmd( "setlocal cursorline" )
+        vim.cmd( "setlocal cursorline" )
     end
 )

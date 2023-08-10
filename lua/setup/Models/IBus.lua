@@ -8,7 +8,12 @@ function IBus()
             this._languages = { EN = "BambooUs", VI = "Bamboo"}
             this._instance = setmetatable( {}, this )
         end
-        return this._instance
+
+        return {
+            getLanguage = this._instance.getLanguage
+            ,setLanguage = this._instance.setLanguage
+            ,getDefault = this._instance.getDefault
+        }
     end
     this.getLanguage = function()
         local currentLanguage = vim.fn.system('ibus engine')

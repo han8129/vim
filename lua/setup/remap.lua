@@ -1,9 +1,14 @@
 require( "setup.Models.WindowMode" )
 require( "setup.Controllers.WindowModeController" )
+require( "setup.Models.Netrw" )
+require( "setup.Controllers.NetrwController" )
 
 local expr = { expr = true, noremap = true }
 local windowMode = WindowMode().getInstance()
 local windowModeController = WindowModeController().new()
+
+local netrw = Netrw().getInstance()
+local netrwController = NetrwController().new()
 
 vim.g.mapleader = " "
 
@@ -53,11 +58,6 @@ REMAP("n", "<C-j>", "<cmd>cprev<CR>zz")
 REMAP("n", "<leader>k", "<cmd>lnext<CR>zz")
 REMAP("n", "<leader>j", "<cmd>lprev<CR>zz")
 
-REMAP("n", "<leader>zt", "vitzf")
-REMAP("n", "<leader>z(", "vi(zf")
-REMAP("n", "<leader>z[", "vi[zf")
-REMAP("n", "<leader>z{", "vi{zf")
-
 REMAP("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 REMAP("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>")
@@ -72,7 +72,7 @@ REMAP("n", "<C-w>"
         return "<C-w>"
     end
 
-    windowModeController.toggle()
+    windowModeController.on()
 end
 , expr)
 
@@ -83,7 +83,7 @@ REMAP("n", "<Esc>"
         return "<cmd>nohls<Enter>"
     end
 
-    windowModeController.toggle()
+    windowModeController.off()
 end
 , expr)
 
@@ -121,7 +121,7 @@ end
 REMAP("n", "o"
 , function()
     if windowMode.getState() == windowMode.getDefault().on then
-        windowModeController.toggle()
+        windowModeController.off()
 
         return "<C-w>o"
     end
@@ -163,3 +163,16 @@ windowMode.remap( "+", "=" )
 windowMode.remap( "0", "10>")
 
 windowMode.remap( "9", "10<")
+
+REMAP("n", "<leader>ff"
+, function()
+    if netrw.getState() == netrw.getDefault().on then
+        if netrwController.close() then
+        return "<cmd>Lex<Enter>"
+        end
+    end
+
+    netrwController.resize()
+    return "<cmd>Lex%:p:h<Enter>"
+end
+, expr)

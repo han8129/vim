@@ -1,5 +1,4 @@
 require( "setup.Models.WindowMode" )
-require( "setup.EventManager" )
 
 local this = {}
 this.__index = this
@@ -10,20 +9,29 @@ function WindowModeController()
         return setmetatable( {}, this )
     end
 
-    this.toggle = function()
+    this.on = function()
         if this.windowMode.getState() == this.windowMode.getDefault().on then
-            this.windowMode.setState( this.windowMode.getDefault().off )
-
-            SetStatusLine()
-            print( " " )
-            return
+            return false
         end
 
         this.windowMode.setState( this.windowMode.getDefault().on )
         SetStatusLine( "w" )
         print( "-- WINDOW --" )
+
+        return true
     end
 
+    this.off = function()
+        if this.windowMode.getState() == this.windowMode.getDefault().off then
+            return false
+        end
+
+        this.windowMode.setState( this.windowMode.getDefault().off )
+        SetStatusLine()
+        print( " " )
+
+        return true
+    end
     this.specificFiles = function()
         if this.windowMode.getState() == this.windowMode.getDefault().off then
             return
@@ -35,7 +43,7 @@ function WindowModeController()
 
         for _, filetype in ipairs(pattern) do
             if filetype == buffer then
-                this.toggle()
+                this.off()
                 return
             end
         end
@@ -43,7 +51,8 @@ function WindowModeController()
 
     return {
         new = this.new
-        ,toggle = this.toggle
+        ,on = this.on
+        ,off = this.off
         ,specificFiles = this.specificFiles
     }
 end
