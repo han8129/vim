@@ -3,9 +3,9 @@ SET.laststatus = 3
 SET.nu = true
 SET.relativenumber = true
 
-SET.tabstop = 4
-SET.softtabstop = 4
-SET.shiftwidth = 4
+SET.tabstop = 7
+SET.softtabstop = 7
+SET.shiftwidth = 7
 SET.expandtab = true
 
 SET.smartindent = true
@@ -33,20 +33,21 @@ SET.updatetime = 50
 SET.foldmethod = "manual"
 
 vim.cmd([[
-    set iskeyword-=_
-    set syntax=on
+set iskeyword-=-
+set iskeyword-=_
+set syntax=on
 
-    set cursorline
-        set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \ 󰉶
-    set list
+set cursorline
+set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \ \ \ \ 󰉶
+set list
 
-    set path+=**
+set path+=**
 
-    set wildmenu
-    set wildchar=<C-n>
-    set wildmode=full
-    set wildoptions=pum
-    set ph=7
+set wildmenu
+set wildchar=<C-n>
+set wildmode=full
+set wildoptions=pum
+set ph=7
 
-    colorscheme quiet
+colorscheme quiet
 ]])

@@ -1,26 +1,13 @@
 AUTOCMD_GROUP('EventManager', { clear = true })
 
-local this = {}
-this.__index = this
-this.group = "EventManager"
-this.listeners = {}
 
 function EventManager()
-    this.new = function()
-        return setmetatable( {}, this )
-    end
+       local this = {}
+       this.__index = this
+       this.group = "EventManager"
+       this.listeners = {}
 
-    this.subscribe = function( eventType, listener )
-        if this.listeners[ eventType ] == nil then
-            this.listeners[ eventType ] = {}
-            this.notify( eventType )
-        end
-
-        table.insert( this.listeners[ eventType ], listener )
-        return true
-    end
-
-    this.unsubscribe = function( eventType, listener )
+    local function unsubscribe( eventType, listener )
         local removed
         for i, element in pairs(this.eventType) do
             if element == listener then
@@ -32,7 +19,7 @@ function EventManager()
         return removed ~= nil
     end
 
-    this.notify = function ( eventType )
+    local function notify( eventType )
         AUTOCMD( eventType, {
             group = this.group
             ,callback = function ()
@@ -43,10 +30,19 @@ function EventManager()
         })
     end
 
+    local function subscribe( eventType, listener )
+        if this.listeners[ eventType ] == nil then
+            this.listeners[ eventType ] = {}
+            notify( eventType )
+        end
+
+        table.insert( this.listeners[ eventType ], listener )
+        return true
+    end
+
     return {
-        new = this.new
-        ,subscribe = this.subscribe
-        ,unsubscribe = this.unsubscribe
-        ,notify = this.notify
+        subscribe = subscribe
+        ,unsubscribe = unsubscribe
+        ,notify = notify
     }
 end

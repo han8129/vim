@@ -1,54 +1,62 @@
 require( "setup.Models.Netrw" )
 
-local this = {}
-this.__index = this
-this.netrw = Netrw().getInstance()
+function NetrwController( netrw )
+       local this = { netrw = netrw }
+       this.__index = this
 
-function NetrwController()
-    this.new = function()
-        return setmetatable( {}, this)
-    end
+       local function resize()
+              local screenWidth = vim.fn.winwidth(0)
 
-    this.resize = function()
-        local screenWidth = vim.fn.winwidth(0)
+              if (screenWidth <= 106) then
+                     LET.netrw_winsize = 50
+              else
+                     LET.netrw_winsize = 25
+              end
 
-        if (screenWidth <= 106) then
-            LET.netrw_winsize = 50
-        else
-            LET.netrw_winsize = 25
-        end
+              return true
+       end
 
-        return true
-    end
+       local function open()
+              if this.netrw.getState() == this.netrw.getDefault().on then
+                     return false
+              end
 
-    this.open = function()
-        this.netrw.setState( this.netrw.getDefault().on )
-        this.netrw.map()
-        return true
-    end
+              this.netrw.setState( this.netrw.getDefault().on )
+              return "<cmd>Lex%:p:h<Enter>"
+       end
 
 
-    this.close = function()
-        local bufferNumber = vim.fn.bufnr("$") -- get number of the last buffer
-        while (bufferNumber > 0) do
-            if (vim.fn.getbufvar( bufferNumber, "&filetype") == "netrw" ) then
+       local function getBufnr( buffer )
+              local bufferNumber = vim.fn.bufnr( buffer ) -- get number of the last buffer
 
-                this.netrw.setState( this.netrw.getDefault().off )
-                -- not sure why this not work
-                -- vim.cmd( "bwipeout" ..  bufferNumber )
-                return true
-            end
+              while (bufferNumber > 0) do
+                     if (vim.fn.getbufvar( bufferNumber, "&filetype" ) == "netrw" ) then
+                            return bufferNumber
+                     end
 
-            bufferNumber = bufferNumber - 1
-        end
+                     bufferNumber = bufferNumber - 1
+              end
 
-        return false
-    end
+              return -1
+       end
 
-    return {
-        new = this.new
-        ,open = this.open
-        ,close = this.close
-        ,resize = this.resize
-    }
+       local function close()
+              if this.netrw.getState() == this.netrw.getDefault().off then
+                     return false
+              end
+
+              local bufferNumber = getBufnr( "$" )
+              if bufferNumber < 0 then
+                     return ""
+              end
+
+              this.netrw.setState( this.netrw.getDefault().off )
+              return "<cmd>bwipeout" .. bufferNumber .. "<Enter>"
+       end
+
+       return {
+              open = open
+              ,close = close
+              ,resize = resize
+       }
 end

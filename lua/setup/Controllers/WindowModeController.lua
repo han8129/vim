@@ -1,58 +1,53 @@
 require( "setup.Models.WindowMode" )
 
-local this = {}
-this.__index = this
+function WindowModeController( windowMode )
+       local this = { windowMode = windowMode }
+       this.__index = this
 
-function WindowModeController()
-    this.new = function()
-        this.windowMode = WindowMode().getInstance()
-        return setmetatable( {}, this )
-    end
+       local function on()
+              if this.windowMode.getState() == this.windowMode.getDefault().on then
+                     return false
+              end
 
-    this.on = function()
-        if this.windowMode.getState() == this.windowMode.getDefault().on then
-            return false
-        end
+              this.windowMode.setState( this.windowMode.getDefault().on )
+              SetStatusLine( "w" )
+              print( "-- WINDOW --" )
 
-        this.windowMode.setState( this.windowMode.getDefault().on )
-        SetStatusLine( "w" )
-        print( "-- WINDOW --" )
+              return true
+       end
 
-        return true
-    end
+       local function off()
+              if this.windowMode.getState() == this.windowMode.getDefault().off then
+                     return false
+              end
 
-    this.off = function()
-        if this.windowMode.getState() == this.windowMode.getDefault().off then
-            return false
-        end
+              this.windowMode.setState( this.windowMode.getDefault().off )
+              SetStatusLine()
+              print( " " )
 
-        this.windowMode.setState( this.windowMode.getDefault().off )
-        SetStatusLine()
-        print( " " )
+              return true
+       end
 
-        return true
-    end
-    this.specificFiles = function()
-        if this.windowMode.getState() == this.windowMode.getDefault().off then
-            return
-        end
+       local function specificFiles()
+              if this.windowMode.getState() == this.windowMode.getDefault().off then
+                     return
+              end
 
-        local pattern = { 'netrw', 'fugitive', 'help' }
+              local pattern = { 'netrw', 'fugitive', 'help' }
 
-        local buffer = vim.bo.ft
+              local buffer = vim.bo.ft
 
-        for _, filetype in ipairs(pattern) do
-            if filetype == buffer then
-                this.off()
-                return
-            end
-        end
-    end
+              for _, filetype in ipairs(pattern) do
+                     if filetype == buffer then
+                            this.off()
+                            return
+                     end
+              end
+       end
 
-    return {
-        new = this.new
-        ,on = this.on
-        ,off = this.off
-        ,specificFiles = this.specificFiles
-    }
+       return {
+              on = on
+              ,off = off
+              ,specificFiles = specificFiles
+       }
 end

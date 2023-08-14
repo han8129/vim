@@ -4,11 +4,12 @@ require( "setup.Models.Netrw" )
 require( "setup.Controllers.NetrwController" )
 
 local expr = { expr = true, noremap = true }
-local windowMode = WindowMode().getInstance()
-local windowModeController = WindowModeController().new()
 
-local netrw = Netrw().getInstance()
-local netrwController = NetrwController().new()
+local windowMode = WindowMode()
+local windowModeController = WindowModeController( windowMode )
+
+local netrw = Netrw()
+local netrwController = NetrwController( netrw )
 
 vim.g.mapleader = " "
 
@@ -16,11 +17,6 @@ REMAP("n", "U", "<C-r>")
 
 REMAP( {'n', 'v'}, ':', ';')
 REMAP( {'n', 'v'}, ';', ':')
-
-REMAP(
-    { "v", "o" }
-    , "-", "^"
-)
 
 REMAP("n", "G", "Gzz")
 
@@ -130,6 +126,16 @@ REMAP("n", "o"
 end
 , expr)
 
+REMAP(
+{ "n", "v", "o" }
+, "_", "g_"
+)
+
+REMAP(
+    { "v", "o" }
+    , "-", "^"
+)
+
 REMAP("n", "-"
 , function()
     if windowMode.getState() == windowMode.getDefault().on then
@@ -167,12 +173,10 @@ windowMode.remap( "9", "10<")
 REMAP("n", "<leader>ff"
 , function()
     if netrw.getState() == netrw.getDefault().on then
-        if netrwController.close() then
-        return "<cmd>Lex<Enter>"
-        end
+        return netrwController.close()
     end
 
     netrwController.resize()
-    return "<cmd>Lex%:p:h<Enter>"
+    return netrwController.open()
 end
 , expr)

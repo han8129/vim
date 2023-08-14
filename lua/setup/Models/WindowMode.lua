@@ -1,72 +1,70 @@
-require( "setup.statusLine" )
+require("setup.statusLine")
 local expr = { expr = true, noremap = true }
 
 -- Window mode
 --
 -- Switch focus, close, resize window with out prefix
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
-local this = {}
+local this = {
+       default = {on = true, off = false}
+}
 this.__index = this
-this._instance = nil
-this.default = { on = true, off = false }
+this.state = this.default.off
 
 function WindowMode()
-    this.getInstance = function()
-        if this._instance == nil then
-            this.state = this.default.off
-            this._instance = true
-        end
+       local function getState()
+              return this.state
+       end
 
-        return {
-            getState = this.getState
-            ,setState = this.setState
-            ,getDefault = this.getDefault
-            ,remap = this.remap
-        }
-    end
+       local function getDefault()
+              local clone = {}
 
-    this.getState = function()
-        return this.state
-    end
+              for key, value in pairs(this.default) do
+                     clone[key] = value
+              end
 
-    this.getDefault = function()
-        local clone = {}
+              return clone
+       end
 
-        for key, value in pairs( this.default ) do
-            clone[key] = value
-        end
+       local function validateState( state )
+              for _, value in pairs(this.default) do
+                     if state == value then
+                            return true
+                     end
+              end
 
-        return clone
-    end
+              return false
+       end
 
-    this.setState = function( state )
-        for _, value in pairs( this.default ) do
-            if state == value then
-                this.state = value
-                return true
-            end
-        end
+       local function setState( newState )
+              if validateState ( newState ) == false then
+                     return false
+              end
 
-        return false
-    end
+              this.state = newState
+              return true
+       end
 
-    this.remap = function( key, customKey )
-        REMAP("n", key
-            , function()
-                if this.state == this.default.off then
-                    return key
-                end
+       local function remap(key, customKey)
+              REMAP("n", key
+              , function()
+                     if this.state == this.default.off then
+                            return key
+                     end
 
-                if customKey then
-                    return "<C-w>" .. customKey
-                end
+                     if customKey then
+                            return "<C-w>" .. customKey
+                     end
 
-                return "<C-w>" .. key
-            end
-        ,expr)
-    end
+                     return "<C-w>" .. key
+              end
+              , expr)
+       end
 
-    return {
-        getInstance = this.getInstance
-    }
+       return {
+              getState = getState ,
+              setState = setState ,
+              getDefault = getDefault ,
+              remap = remap
+       }
 end

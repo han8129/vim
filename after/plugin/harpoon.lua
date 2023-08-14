@@ -38,10 +38,10 @@ function HarpoonMenu()
     local bufnr = vim.api.nvim_get_current_buf()
     local opts = { buffer = bufnr, remap = true }
 
-    vim.keymap.set("n", "J", "v:m '>+1<CR>gv=gv<Esc>", opts );
-    vim.keymap.set("n", "K", "v:m '<-2<CR>gv=gv<Esc>", opts );
-    vim.keymap.set("n", "h", "p", opts );
-    vim.keymap.set("n", "l", "dd", opts );
+    vim.keymap.set( "n", "J", "v:m '>+1<CR>gv=gv<Esc>", opts );
+    vim.keymap.set( "n", "K", "v:m '<-2<CR>gv=gv<Esc>", opts );
+    vim.keymap.set( "n", "H", "p", opts );
+    vim.keymap.set( "n", "L", "dd", opts );
 
     REMAP("n", "a", function() ui.nav_file(1) end, opts)
     REMAP("n", "e", function() ui.nav_file(2) end, opts)

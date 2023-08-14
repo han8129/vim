@@ -1,5 +1,7 @@
+vim.b.terminal_green = COLOR.green
+vim.b.red = COLOR.red1
+
 vim.cmd([[
-    let terminal_green = "#4AF626"
 
     highlight Normal guifg=green
 
@@ -11,7 +13,8 @@ vim.cmd([[
 
     highlight Type guifg=green
 
-    highlight Statement gui=italic guifg=#4af626
+    "" To pass variable to a command
+    execute "highlight Statement gui=none guifg=" b:terminal_green
 
     highlight Preproc guifg=green
 
@@ -19,7 +22,7 @@ vim.cmd([[
 
     highlight Comment guifg=gray gui=italic
 
-    highlight CursorlineNr guifg=#4af626
+    execute "highlight CursorlineNr guifg=" b:terminal_green
 
     highlight Search guibg=yellow guifg=black gui=italic
     highlight IncSearch guibg=red guifg=white gui=italic
@@ -38,8 +41,8 @@ vim.cmd([[
 
     highlight Pmenu guifg=gray guibg=black
 
-    highlight ModeMsg guifg=#4AF626
+    execute "highlight ModeMsg guifg=" b:terminal_green
+    execute "highlight Visual guifg=white gui=italic guibg=" b:red
+    execute "highlight ErrorMsg gui=NONE guifg=white guibg=" b:red
 ]])
 
-vim.cmd("highlight Visual guifg=white gui=italic guibg=" .. COLOR['red1'])
-vim.cmd("highlight ErrorMsg gui=NONE guifg=white guibg=" .. COLOR['red1'])
