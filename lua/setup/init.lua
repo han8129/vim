@@ -1,19 +1,13 @@
--- require( "setup.packer" )
 require( "setup.set" )
 require( "setup.remap" )
 require( "setup.Models.Netrw" )
 require( "setup.EventManager" )
 require( "setup.highlight" )
 require("setup.statusLine")
-require("setup.Models.IBus")
-require("setup.Controllers.IBusController")
 require( "setup.Controllers.WindowModeController" )
 require( "setup.EventManager" )
 
 local eventManager = EventManager()
-
-local ibus = IBus()
-local ibusController = IBusController( ibus )
 
 local windowMode = WindowMode()
 local windowModeController = WindowModeController( windowMode )
@@ -41,9 +35,6 @@ AUTOCMD({"BufWritePre"}, {
        command = [[%s/\s\+$//e]],
 })
 
--- turn off Ibus when entering vim
-ibus.setLanguage( ibus.getDefault().EN )
-
 eventManager.subscribe( "ModeChanged",
 function()
        if windowMode.getState() == windowMode.getDefault().off then
@@ -62,12 +53,6 @@ eventManager.subscribe( "FileType" , function()
        end
 end)
 
-eventManager.subscribe( "CmdLineEnter", function() ibusController.on() end )
-
-eventManager.subscribe( "CmdLineLeave", function() ibusController.off() end )
-
-eventManager.subscribe( "InsertLeave", function() ibusController.off() end )
-
 eventManager.subscribe( "WinLeave"
 ,function() vim.cmd( "setlocal nocursorline" ) end
 )
@@ -75,7 +60,6 @@ eventManager.subscribe( "WinLeave"
 eventManager.subscribe( "InsertEnter"
 ,function()
        windowModeController.off()
-       ibusController.on()
 end
 )
 

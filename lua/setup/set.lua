@@ -38,7 +38,7 @@ set iskeyword-=_
 set syntax=on
 
 set cursorline
-set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \ 󰉶
+set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \|>
 set list
 
 set path+=**
