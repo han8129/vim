@@ -180,3 +180,5 @@ REMAP("n", "<leader>ff"
     return netrwController.open()
 end
 , expr)
+
+REMAP("n", "<leader>/", ":find ")

@@ -1,4 +1,4 @@
-require( "setup.packer" )
+-- require( "setup.packer" )
 require( "setup.set" )
 require( "setup.remap" )
 require( "setup.Models.Netrw" )
@@ -19,10 +19,6 @@ local windowMode = WindowMode()
 local windowModeController = WindowModeController( windowMode )
 
 local netrw = Netrw()
-
-function R(name)
-       require("plenary.reload").reload_module(name)
-end
 
 local ThePrimeagenGroup = AUTOCMD_GROUP('ThePrimeagen', {})
 
