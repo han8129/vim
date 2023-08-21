@@ -31,9 +31,9 @@ function IBus()
               return clone
        end
 
-       return {
+       return setmetatable({
               getLanguage = getLanguage
               ,setLanguage = setLanguage
               ,getDefault = getDefault
-       }
+       }, this)
 end

@@ -47,24 +47,24 @@ function WindowMode()
 
        local function remap(key, customKey)
               REMAP("n", key
-              , function()
-                     if this.state == this.default.off then
-                            return key
-                     end
+                     ,function()
+                            if this.state == this.default.off then
+                                   return key
+                            end
 
-                     if customKey then
-                            return "<C-w>" .. customKey
-                     end
+                            if customKey then
+                                   return "<C-w>" .. customKey
+                            end
 
-                     return "<C-w>" .. key
-              end
+                            return "<C-w>" .. key
+                     end
               , expr)
        end
 
-       return {
-              getState = getState ,
-              setState = setState ,
-              getDefault = getDefault ,
-              remap = remap
-       }
+       return setmetatable({
+              getState = getState
+              ,setState = setState
+              ,getDefault = getDefault
+              ,remap = remap
+       }, this )
 end

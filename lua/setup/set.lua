@@ -3,9 +3,9 @@ SET.laststatus = 3
 SET.nu = true
 SET.relativenumber = true
 
-SET.tabstop = 7
-SET.softtabstop = 7
-SET.shiftwidth = 7
+SET.tabstop = 4
+SET.softtabstop = 4
+SET.shiftwidth = 4
 SET.expandtab = true
 
 SET.smartindent = true
@@ -38,7 +38,7 @@ set iskeyword-=_
 set syntax=on
 
 set cursorline
-set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \ \ \ \ 󰉶
+set listchars=tab:>~,nbsp:_,trail:!,leadmultispace:\ \ \ 󰉶
 set list
 
 set path+=**

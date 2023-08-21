@@ -6,6 +6,12 @@ require("setup.Models.IBus")
 -- If Ibus bamboo (VN) is set in insert mode, switch to US
 -- in normal mode.
 function IBusController( ibus )
+       if getmetatable( ibus ) == nil
+              or getmetatable( ibus ) ~= getmetatable( IBus() )
+       then
+              error( "Not allowed" )
+       end
+
        local this = { needSwitch = false, ibus = ibus }
        this.__index = this
 

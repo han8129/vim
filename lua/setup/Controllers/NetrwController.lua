@@ -27,9 +27,9 @@ function NetrwController( netrw )
 
 
        local function getBufnr( buffer )
-              local bufferNumber = vim.fn.bufnr( buffer ) -- get number of the last buffer
+              local bufferNumber = vim.fn.bufnr( buffer )
 
-              while (bufferNumber > 0) do
+              while (bufferNumber > 1) do
                      if (vim.fn.getbufvar( bufferNumber, "&filetype" ) == "netrw" ) then
                             return bufferNumber
                      end
@@ -42,13 +42,10 @@ function NetrwController( netrw )
 
        local function close()
               if this.netrw.getState() == this.netrw.getDefault().off then
-                     return false
-              end
-
-              local bufferNumber = getBufnr( "$" )
-              if bufferNumber < 0 then
                      return ""
               end
+
+              local bufferNumber = getBufnr( "$" ) -- get that last buffer
 
               this.netrw.setState( this.netrw.getDefault().off )
               return "<cmd>bwipeout" .. bufferNumber .. "<Enter>"

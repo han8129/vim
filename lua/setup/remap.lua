@@ -119,7 +119,7 @@ REMAP("n", "o"
     if windowMode.getState() == windowMode.getDefault().on then
         windowModeController.off()
 
-        return "<C-w>o"
+        return netrwController.close() .. "<C-w>o"
     end
 
     return "o"

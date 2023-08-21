@@ -1,6 +1,12 @@
 require( "setup.Models.WindowMode" )
 
 function WindowModeController( windowMode )
+       if getmetatable( windowMode ) ~= getmetatable( WindowMode() )
+              or getmetatable(windowMode) == nil
+       then
+              error("Not allowed")
+       end
+
        local this = { windowMode = windowMode }
        this.__index = this
 
@@ -39,7 +45,7 @@ function WindowModeController( windowMode )
 
               for _, filetype in ipairs(pattern) do
                      if filetype == buffer then
-                            this.off()
+                            off()
                             return
                      end
               end
