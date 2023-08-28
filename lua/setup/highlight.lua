@@ -3,22 +3,22 @@ vim.b.red = COLOR.red1
 
 vim.cmd([[
 
-    highlight Normal guifg=green
+    execute "highlight Normal gui=none guifg=" b:terminal_green
 
-    highlight String guifg=green
+    execute "highlight String gui=none guifg=" b:terminal_green
 
-    highlight Number guifg=green
+    execute "highlight Number gui=none guifg=" b:terminal_green
 
-    highlight Constant guifg=green
+    execute "highlight Constant gui=none guifg=" b:terminal_green
 
-    highlight Type guifg=green
+    execute "highlight Type gui=none guifg=" b:terminal_green
 
     "" To pass variable to a command
     execute "highlight Statement gui=none guifg=" b:terminal_green
 
-    highlight Preproc guifg=green
+    execute "highlight Preproc gui=none guifg=" b:terminal_green
 
-    highlight Identifier guifg=green
+    execute "highlight Identifier gui=none guifg=" b:terminal_green
 
     highlight Comment guifg=gray gui=italic
 
@@ -45,4 +45,3 @@ vim.cmd([[
     execute "highlight Visual guifg=white gui=italic guibg=" b:red
     execute "highlight ErrorMsg gui=NONE guifg=white guibg=" b:red
 ]])
-
