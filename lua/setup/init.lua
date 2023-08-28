@@ -43,10 +43,6 @@ function()
 end
 )
 
-eventManager.subscribe( "BufEnter" , function()
-       SetGitBranch()
-end)
-
 eventManager.subscribe( "FileType" , function()
        if "netrw" == vim.bo.ft then
               netrw.map()

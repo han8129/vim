@@ -15,7 +15,7 @@ SET.wrap = false
 
 SET.swapfile = false
 SET.backup = false
--- SET.undodir = os.getenv("HOME") .. "/./undodir"
+SET.undodir = "~/undodir"
 SET.undofile = true
 
 SET.hlsearch = true

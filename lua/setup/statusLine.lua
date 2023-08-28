@@ -6,6 +6,8 @@ local select = font .. "guifg=white guibg=" .. COLOR.red1
 local command = font .. "guifg=black guibg=" .. COLOR.green
 local window = font .. "guifg=black guibg=magenta"
 
+vim.opt.statusline = "%#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
+
 function GitCurrentBranch()
     return vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 end
@@ -18,7 +20,7 @@ function SetGitBranch()
     if (currentBranch == '') then
         vim.opt.statusline = "%#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     else
-        vim.opt.statusline = "%#Gitbranch# שׂ " ..
+        vim.opt.statusline = "%#Gitbranch# * " ..
             currentBranch .. " %#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     end
 end
