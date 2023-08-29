@@ -1,6 +1,5 @@
 AUTOCMD_GROUP('EventManager', { clear = true })
 
-
 function EventManager()
        local this = {}
        this.__index = this

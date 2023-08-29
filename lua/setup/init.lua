@@ -19,6 +19,7 @@ local windowMode = WindowMode()
 local windowModeController = WindowModeController( windowMode )
 
 local netrw = Netrw()
+local netrwController = NetrwController( netrw )
 
 function R(name)
        require("plenary.reload").reload_module(name)
@@ -62,8 +63,13 @@ end)
 
 eventManager.subscribe( "FileType" , function()
        if "netrw" == vim.bo.ft then
-              netrw.map()
+            netrw.map()
        end
+
+        if netrw.getState() == netrw.getDefault().off then
+            netrwController.resize()
+            netrwController.open()
+        end
 end)
 
 eventManager.subscribe( "CmdLineEnter", function() ibusController.on() end )

@@ -1,3 +1,5 @@
+require("setup.Models.OnOrOff")
+
 local options = {
        netrw_banner = 0,
        netrw_browse_split = 4,
@@ -13,8 +15,9 @@ for key, value in pairs( options ) do
 end
 
 local this = {
-       default = { on = true, off = false }
+       default = OnOrOff()
 }
+
 this.__index = this
 this.state = this.default.off
 

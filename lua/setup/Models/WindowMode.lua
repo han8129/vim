@@ -1,13 +1,13 @@
 require("setup.statusLine")
+require("setup.Models.OnOrOff")
+
 local expr = { expr = true, noremap = true }
 
 -- Window mode
 --
 -- Switch focus, close, resize window with out prefix
 -- Toggle by <C-w>, Go back to normal mode with <Esc>
-local this = {
-       default = {on = true, off = false}
-}
+local this = { default = OnOrOff() }
 this.__index = this
 this.state = this.default.off
 
