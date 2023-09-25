@@ -1,3 +1,5 @@
+require("setup.Models.IBus")
+require("setup.Controllers.IBusController")
 require( "setup.Models.WindowMode" )
 require( "setup.Controllers.WindowModeController" )
 require( "setup.Models.Netrw" )
@@ -10,6 +12,7 @@ local windowModeController = WindowModeController( windowMode )
 
 local netrw = Netrw()
 local netrwController = NetrwController( netrw )
+local ibusController = IBusController( IBus() )
 
 vim.g.mapleader = " "
 
@@ -132,8 +135,8 @@ REMAP(
 )
 
 REMAP(
-    { "v", "o" }
-    , "-", "^"
+{ "v", "o" }
+, "-", "^"
 )
 
 REMAP("n", "-"
@@ -180,3 +183,14 @@ REMAP("n", "<leader>ff"
     return netrwController.open()
 end
 , expr)
+
+REMAP("i", "<Enter>"
+, function()
+    if ibusController.getNeedSwitch() == false then
+        return "<Enter>"
+    end
+
+    -- return "<Enter><cmd>lua IBusController( IBus() ).on()<Enter>"
+end
+, expr)
+

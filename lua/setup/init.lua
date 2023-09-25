@@ -78,9 +78,7 @@ eventManager.subscribe( "CmdLineLeave", function() ibusController.off() end )
 
 eventManager.subscribe( "InsertLeave", function() ibusController.off() end )
 
-eventManager.subscribe( "WinLeave"
-,function() vim.cmd( "setlocal nocursorline" ) end
-)
+eventManager.subscribe( "WinLeave", function() vim.cmd( "setlocal nocursorline" ) end)
 
 eventManager.subscribe( "InsertEnter"
 ,function()

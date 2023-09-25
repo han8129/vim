@@ -1,10 +1,10 @@
 AUTOCMD_GROUP('EventManager', { clear = true })
 
 function EventManager()
-       local this = {}
-       this.__index = this
-       this.group = "EventManager"
-       this.listeners = {}
+    local this = {}
+    this.__index = this
+    this.group = "EventManager"
+    this.listeners = {}
 
     local function unsubscribe( eventType, listener )
         local removed

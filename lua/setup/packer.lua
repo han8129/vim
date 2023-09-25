@@ -40,23 +40,22 @@ return packer.startup(function(use)
         end
     })
 
-    use {
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-            ts_update()
-        end, }
-    use("nvim-treesitter/playground")
+--    use {
+--        'nvim-treesitter/nvim-treesitter',
+--        run = function()
+--            local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+--            ts_update()
+--        end, }
+--    use("nvim-treesitter/playground")
+--    use("nvim-treesitter/nvim-treesitter-context");
     use("theprimeagen/harpoon")
     use("theprimeagen/refactoring.nvim")
     use("mbbill/undotree")
     use("tpope/vim-fugitive")
-    use("nvim-treesitter/nvim-treesitter-context");
 
     use { 'neoclide/coc.nvim', branch = 'release' }
 
     use("folke/zen-mode.nvim")
-    use("eandrju/cellular-automaton.nvim")
     use("laytan/cloak.nvim")
 
     use( "ggandor/leap.nvim" )

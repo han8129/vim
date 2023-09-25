@@ -18,7 +18,7 @@ function SetGitBranch()
     if (currentBranch == '') then
         vim.opt.statusline = "%#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     else
-        vim.opt.statusline = "%#Gitbranch# שׂ " ..
+        vim.opt.statusline = "%#Gitbranch#  " ..
             currentBranch .. " %#FileStatus#%h%m%r%#StatusLine# %-.79(%<%f%) %P %#Nontext#"
     end
 end

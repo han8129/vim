@@ -33,8 +33,7 @@ SET.updatetime = 50
 SET.foldmethod = "manual"
 
 vim.cmd([[
-set iskeyword-=-
-set iskeyword-=_
+set iskeyword-=-_
 set syntax=on
 
 set cursorline

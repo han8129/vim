@@ -1,5 +1,8 @@
 require("setup.Models.IBus")
 
+local this = { needSwitch = false, ibus = IBus()}
+this.__index = this
+
 -- Manage Ibus bamboo
 --
 -- Turn off iBus VN when enter Vim.
@@ -12,14 +15,10 @@ function IBusController( ibus )
               error( "Not allowed" )
        end
 
-       local this = { needSwitch = false, ibus = ibus }
-       this.__index = this
-
        local function on()
               if this.needSwitch then
                      this.ibus.setLanguage( this.ibus.getDefault().VI )
               end
-
        end
 
        local function off()
@@ -32,8 +31,13 @@ function IBusController( ibus )
               this.needSwitch = true
        end
 
+       local function getNeedSwitch()
+            return this.needSwitch
+       end
+
        return {
               on = on
               ,off = off
+              ,getNeedSwitch = getNeedSwitch
        }
 end
