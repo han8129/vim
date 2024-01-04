@@ -1,4 +1,4 @@
-require( "setup.packer" )
+require( "setup.lazy" )
 require( "setup.set" )
 require( "setup.remap" )
 require( "setup.Models.Netrw" )

@@ -1,3 +1,7 @@
+    return {
+        "tpope/vim-fugitive"
+        ,keys = "gs"
+        ,config = function()
 vim.keymap.set("n", "gs", vim.cmd.Git)
 
 local ThePrimeagen_Fugitive = vim.api.nvim_create_augroup("ThePrimeagen_Fugitive", {})
@@ -38,3 +42,5 @@ autocmd("BufWinEnter", {
 
 vim.keymap.set("n", "gl", ":diffget //3<CR>")
 vim.keymap.set("n", "gh", ":diffget //2<CR>")
+        end
+        }

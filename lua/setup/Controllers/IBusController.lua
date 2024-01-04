@@ -17,7 +17,7 @@ function IBusController( ibus )
 
        local function on()
               if this.needSwitch then
-                     this.ibus.setLanguage( this.ibus.getDefault().VI )
+                     this.ibus.setLanguage( this.ibus.getDefault().EN )
               end
        end
 

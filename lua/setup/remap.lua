@@ -14,7 +14,6 @@ local netrw = Netrw()
 local netrwController = NetrwController( netrw )
 local ibusController = IBusController( IBus() )
 
-vim.g.mapleader = " "
 
 REMAP("n", "U", "<C-r>")
 
@@ -184,13 +183,13 @@ REMAP("n", "<leader>ff"
 end
 , expr)
 
-REMAP("i", "<Enter>"
-, function()
-    if ibusController.getNeedSwitch() == false then
-        return "<Enter>"
-    end
-
-    -- return "<Enter><cmd>lua IBusController( IBus() ).on()<Enter>"
-end
-, expr)
+-- REMAP("i", "<Enter>"
+-- , function()
+--     if ibusController.getNeedSwitch() == false then
+--         return "<Enter>"
+--     end
+--
+--     -- return "<Enter><cmd>lua IBusController( IBus() ).on()<Enter>"
+-- end
+-- , expr)
 
